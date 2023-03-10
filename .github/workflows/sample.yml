@@ -1,0 +1,10 @@
+name: simple echo
+
+on: [push]
+
+jobs:
+  run-github-actions:
+    runs-on: ubuntu-latest
+    steps:
+      - name: echo hello utility
+        run: echo "hello Pranay"
