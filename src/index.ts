@@ -11,7 +11,8 @@ import bodyParser from "body-parser";
 import cors from "cors";
 import session from "express-session";
 import { getUserfromDB, register } from "./auth";
-import { hash, compare } from "bcryptjs";
+import { compare } from "bcryptjs";
+import { ValidationError } from "yup";
 
 const app = express();
 
@@ -31,12 +32,10 @@ app.post("/signup", async function (req, res, next) {
     const { id, name, password, confirmPassword } = req.body;
     console.log(req.body);
     console.log(id, name, password, confirmPassword);
-    const hashedPassword = await hash(password, 8);
     const registrationId: string = await register(
       id,
       name,
       password,
-      hashedPassword,
       confirmPassword
     );
     if (registrationId) {
@@ -53,7 +52,10 @@ app.post("/signup", async function (req, res, next) {
       });
     }
   } catch (ex) {
-    console.log(ex);
+    if (ex instanceof ValidationError) {
+      console.log(JSON.stringify(ex, null, 2));
+      return res.status(400).json(MESSAGE.MESSAGE_INVALID_USER);
+    }
     return res.status(500).send(MESSAGE.MESSAGE_INTERNAL_SERVER_ERROR);
   }
 });
@@ -104,15 +106,16 @@ app.get("/workouts/:date/:id", isAuthenticated, async function (req, res) {
     let { workoutnames } = req.query;
     console.log(date, id, workoutnames);
     //validate date and id
-
-    const allWorkoutsinJson = await readWorkoutsFromDb(id);
-
-    const workouts = parseWorkouts(
-      allWorkoutsinJson,
-      date,
-      workoutnames as string
-    );
-    return res.send(workouts);
+    if (date?.split("-").length == 3 && id) {
+      const allWorkoutsinJson = await readWorkoutsFromDb(id);
+      const workouts = parseWorkouts(
+        allWorkoutsinJson,
+        date,
+        workoutnames as string
+      );
+      return res.send(workouts);
+    }
+    return res.status(400).json(MESSAGE.MESSAGE_INAVLID_WORKOUTS);
   } catch (ex: any) {
     console.log(ex);
     if (ex.message.includes("JSON")) {

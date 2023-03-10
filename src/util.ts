@@ -1,4 +1,4 @@
-import { Set, Workout, WorkoutList, WorkoutSets } from "./types";
+import { Workout, WorkoutList, WorkoutSets } from "./types";
 import { readFile, writeFile } from "fs";
 import { promisify } from "util";
 import { join } from "path";
@@ -29,32 +29,6 @@ export function parseWorkouts(
     }
   }
 }
-//validate workouts before saving
-
-// const validWorkouts = (workoutsToSave: WorkoutSets | Workout) => {
-//   try {
-//     const _validSets = (workout: Set) =>
-//       "reps" in workout && "weight" in workout && "time" in workout;
-//     let allWorkoutNames = Object.keys(workoutsToSave);
-//     if ("clockin" in workoutsToSave && "workouts" in workoutsToSave) {
-//       return allWorkoutNames.every((name) => {
-//         let workout = (workoutsToSave as Workout).workouts[name];
-//         return workout?.length && workout?.every((set) => _validSets(set));
-//       });
-//     } else {
-//       return (
-//         allWorkoutNames.length &&
-//         allWorkoutNames?.every((name) =>
-//           (workoutsToSave as WorkoutSets)?.[name]?.every((set) =>
-//             _validSets(set)
-//           )
-//         )
-//       );
-//     }
-//   } catch (ex) {
-//     return false;
-//   }
-// };
 
 //1) check if the workouts exist, if yes then append else write
 
