@@ -1,5 +1,14 @@
+// workoutList={
+//   "2023-03-08":{
+//     "clockin":"9:00",
+//     "clcokout":"9:30"
+//     "workouts":{"Squats":[{reps:10,weight:20,time:"9:00"}]}
+//   }
+
+// }
+
 export type WorkoutList = {
-  [key: string]: Workout;
+  [date: string]: Workout;
 };
 
 export type Workout = {
@@ -7,15 +16,15 @@ export type Workout = {
   clockout: string;
   workouts: WorkoutSets;
 };
+
 export type Meal = {
   name: string;
   composition: any[];
   time: string;
   totalCal: number;
 };
-
 export type WorkoutSets = {
-  [workoutname: string]: Set[];
+  [workoutName: string]: Set[];
 };
 export type Set = {
   reps: number;

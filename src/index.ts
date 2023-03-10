@@ -27,29 +27,34 @@ app.use(
 
 //@ts-ignore
 app.post("/signup", async function (req, res, next) {
-  const { id, name, password, confirmPassword } = req.body;
-  console.log(req.body);
-  console.log(id, name, password, confirmPassword);
-  const hashedPassword = await hash(password, 8);
-  const registrationId: string = await register(
-    id,
-    name,
-    password,
-    hashedPassword,
-    confirmPassword
-  );
-  if (registrationId) {
-    req.session.registrationId = registrationId;
-    console.log(req.session.id);
-    return res.status(201).json({
-      status: MESSAGE.MESSAGE_REGISTRATION_SUCESS,
-      body: JSON.stringify({ registrationId }),
-    });
-  } else {
-    return res.status(400).json({
-      status: MESSAGE.MESSAGE_REGISTRATION_FAIL,
-      body: JSON.stringify({ message: MESSAGE.MESSAGE_REGISTRATION_FAIL }),
-    });
+  try {
+    const { id, name, password, confirmPassword } = req.body;
+    console.log(req.body);
+    console.log(id, name, password, confirmPassword);
+    const hashedPassword = await hash(password, 8);
+    const registrationId: string = await register(
+      id,
+      name,
+      password,
+      hashedPassword,
+      confirmPassword
+    );
+    if (registrationId) {
+      req.session.registrationId = registrationId;
+      console.log(req.session.id);
+      return res.status(201).json({
+        status: MESSAGE.MESSAGE_REGISTRATION_SUCESS,
+        body: JSON.stringify({ registrationId }),
+      });
+    } else {
+      return res.status(400).json({
+        status: MESSAGE.MESSAGE_REGISTRATION_FAIL,
+        body: JSON.stringify({ message: MESSAGE.MESSAGE_REGISTRATION_FAIL }),
+      });
+    }
+  } catch (ex) {
+    console.log(ex);
+    return res.status(500).send(MESSAGE.MESSAGE_INTERNAL_SERVER_ERROR);
   }
 });
 
@@ -66,26 +71,31 @@ const isAuthenticated = async (req: any, res: any, next: any) => {
 };
 //@ts-ignore
 app.post("/login/:id", async function (req, res) {
-  console.log(req.session.id);
-  if (req.session.registrationId) {
-    return res.status(200).json({
-      body: MESSAGE.MESSAGE_LOGIN_SUCCESS,
-    });
-  }
-  const { registrationId, password } = req.body;
-  const userObj = await getUserfromDB(registrationId);
-  if (userObj) {
-    const isAuthenticated = await compare(password, userObj?.hashedPassword);
-    if (isAuthenticated) {
-      req.session.registrationId = registrationId;
+  try {
+    console.log(req.session.id);
+    if (req.session.registrationId) {
       return res.status(200).json({
         body: MESSAGE.MESSAGE_LOGIN_SUCCESS,
       });
     }
+    const { registrationId, password } = req.body;
+    const userObj = await getUserfromDB(registrationId);
+    if (userObj) {
+      const isAuthenticated = await compare(password, userObj?.hashedPassword);
+      if (isAuthenticated) {
+        req.session.registrationId = registrationId;
+        return res.status(200).json({
+          body: MESSAGE.MESSAGE_LOGIN_SUCCESS,
+        });
+      }
+    }
+    return res.status(400).json({
+      body: MESSAGE.MESSAGE_LOGIN_FAIL,
+    });
+  } catch (ex) {
+    console.log(ex);
+    res.status(500).send(MESSAGE.MESSAGE_INTERNAL_SERVER_ERROR);
   }
-  return res.status(400).json({
-    body: MESSAGE.MESSAGE_LOGIN_FAIL,
-  });
 });
 
 app.get("/workouts/:date/:id", isAuthenticated, async function (req, res) {
@@ -113,16 +123,24 @@ app.get("/workouts/:date/:id", isAuthenticated, async function (req, res) {
 });
 //@ts-ignore
 app.post("/workouts/:date/:id", isAuthenticated, async function (req, res) {
-  const { date, id } = req.params;
-  //const { workouts } = req.body;
-  console.log(req.body);
-  console.log(JSON.stringify(req.body, null, 2));
-  const allWorkoutsinJson = await readWorkoutsFromDb(id);
-  const newWorkouts = createWorkouts(allWorkoutsinJson, date, req.body);
-  if (newWorkouts) {
-    await writeRecordsToDb(id, newWorkouts);
-    return res.send(newWorkouts);
+  try {
+    const { date, id } = req.params;
+    //const { workouts } = req.body;
+    console.log(req.body);
+    console.log(JSON.stringify(req.body, null, 2));
+    const allWorkoutsinJson = await readWorkoutsFromDb(id);
+    const newWorkouts = await createWorkouts(allWorkoutsinJson, date, req.body);
+    if (newWorkouts) {
+      await writeRecordsToDb(id, newWorkouts);
+      return res.status(201).send(MESSAGE.MESSAGE_SUCCESS);
+    }
+    return res.send(MESSAGE.MESSAGE_INAVLID_WORKOUTS);
+  } catch (ex: any) {
+    console.log(ex);
+    if (ex.errors) {
+      return res.status(400).json(ex.errors);
+    }
+    return res.status(500).json(MESSAGE.MESSAGE_INTERNAL_SERVER_ERROR);
   }
-  return res.send(MESSAGE.MESSAGE_INAVLID_WORKOUTS);
 });
 app.listen(3000, () => console.log("started listening"));
