@@ -6,7 +6,7 @@ env:
   wf_env: ${{secrets.GITHUB_TOKEN}}
 
 jobs:
-  publish random file:
+  publish-random-file:
     runs-on: ubuntu-latest
     steps:
       - name: publish
