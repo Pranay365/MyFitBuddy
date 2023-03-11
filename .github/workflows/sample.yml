@@ -6,5 +6,11 @@ jobs:
   run-github-actions:
     runs-on: ubuntu-latest
     steps:
-      - name: echo hello utility
-        run: echo "hello Pranay"
+      - name: checkout
+        uses: actions/checkout@v3
+      - name: setup nodejs
+        uses: actions/setup-node@v3
+      - name: install dependencies
+        run: npm i
+      - name: run test
+        run: npm test
