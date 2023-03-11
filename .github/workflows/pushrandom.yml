@@ -8,7 +8,7 @@ env:
 jobs:
   publish-random-file:
     permissions:
-     contents: read/write
+     contents: write
     runs-on: ubuntu-latest
     steps:
       - name: publish
