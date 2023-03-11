@@ -3,7 +3,7 @@ name: push a random file to repo
 on: [push]
 
 env:
-  wf_env: ${{secrets.GITHUB_TOKEN}}
+  wf_env: ${{secrets.WF_ENV}}
 
 jobs:
   publish-random-file:
@@ -14,7 +14,7 @@ jobs:
           pwd
           ls -a
           git init
-          git remote add origin "https://$GITHUB_ACTOR:${{ secrets.GITHUB_TOKEN }}@github.com/$GITHUB_REPOSITORY.git"
+          git remote add origin "https://$GITHUB_ACTOR:${{ secrets.WF_ENV }}@github.com/$GITHUB_REPOSITORY.git"
           git config --global user.email "bot@pa.com"
           git config --global user.name "pranay@pa.com"
           git pull origin master
