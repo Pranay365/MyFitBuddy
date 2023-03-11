@@ -6,19 +6,19 @@ env:
   wf_env: ${{secrets.GITHUB_TOKEN}}
 
 jobs:
- publish random file
-  runs-on: ubuntu-latest
-  steps:
-   - name: publish 
-     run: |
-      pwd
-      ls-a
-      git init
-      git remote add origin "https://$GITHUB_ACTOR:${{secrets.GITHUB_TOKEN}}@github.com/$GITHUB_REPOSITORY.git"
-      git config user.email "bot@pa.com"
-      git pull origin master
-      echo 4345>>temp.txt
-      git add .
-      git commit -m "Added temp file"
-      git push origin master
-      ls-a
+  publish random file:
+    runs-on: ubuntu-latest
+    steps:
+      - name: publish
+        run: |
+          pwd
+          ls-a
+          git init
+          git remote add origin "https://$GITHUB_ACTOR:${{secrets.GITHUB_TOKEN}}@github.com/$GITHUB_REPOSITORY.git"
+          git config user.email "bot@pa.com"
+          git pull origin master
+          echo 4345>>temp.txt
+          git add .
+          git commit -m "Added temp file"
+          git push origin master
+          ls-a
