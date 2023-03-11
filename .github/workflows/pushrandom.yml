@@ -7,6 +7,8 @@ env:
 
 jobs:
   publish-random-file:
+    permissions:
+     contents: read/write
     runs-on: ubuntu-latest
     steps:
       - name: publish
@@ -14,7 +16,7 @@ jobs:
           pwd
           ls -a
           git init
-          git remote add origin "https://$GITHUB_ACTOR:${{ secrets.WF_ENV }}@github.com/$GITHUB_REPOSITORY.git"
+          git remote add origin "https://$GITHUB_ACTOR:${{ secrets.GITHUB_TOKEN }}@github.com/$GITHUB_REPOSITORY.git"
           git config --global user.email "bot@pa.com"
           git config --global user.name "pranay@pa.com"
           git pull origin master
