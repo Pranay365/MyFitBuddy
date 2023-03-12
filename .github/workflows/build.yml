@@ -1,12 +1,10 @@
-name: simple echo
+name: TEST RUNNER FOR MYFITBUDDY
 
 on: [push]
 env:
   WF_VAL: Available for all
 jobs:
-  run-github-actions:
-    permissions:
-      contents: wite
+  run-test-actions:
     runs-on: ubuntu-latest
     steps:
       - name: checkout
