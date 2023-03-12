@@ -2,10 +2,7 @@ import { Workout, WorkoutList, WorkoutSets } from "./types";
 import { readFile, writeFile } from "fs";
 import { promisify } from "util";
 import { join } from "path";
-import { ApplicationError } from "./Error";
 import { isValidWorkouts } from "./validation";
-
-import { MESSAGE } from "./constants";
 export const readFilePromise = promisify(readFile);
 export const writeFilePromise = promisify(writeFile);
 
@@ -14,26 +11,24 @@ export function parseWorkouts(
   date: string,
   workoutnamesInqs?: string
 ) {
-  try {
-    let savedWorkouts: Workout = JSON.parse(allWorkoutsinJson)[date];
-    if (workoutnamesInqs) {
-      let workoutnames = workoutnamesInqs.split(",");
-      let workouts = workoutnames.map((name) => savedWorkouts.workouts[name]);
-      return workouts;
-    } else {
-      return savedWorkouts.workouts;
-    }
-  } catch (ex: any) {
-    if (ex.message.includes("JSON")) {
-      return new ApplicationError(MESSAGE.MESSAGE_INTERNAL_SERVER_ERROR, 500);
-    }
+  let savedWorkouts: Workout = JSON.parse(allWorkoutsinJson)[date];
+  if (workoutnamesInqs) {
+    let workoutnames = workoutnamesInqs.split(",");
+    let workouts = workoutnames
+      .map((name) => savedWorkouts?.workouts[name.toLocaleLowerCase()])
+      .filter((workout) => workout);
+    return workouts;
+  } else {
+    return savedWorkouts?.workouts;
   }
 }
 
 //1) check if the workouts exist, if yes then append else write
 
 // prettier-ignore
-export async function createWorkouts( allWorkoutsinJson: string,date: string, workoutsToSave: WorkoutSets | Workout) {
+export async function createWorkouts( 
+  allWorkoutsinJson: string,date: string,
+   workoutsToSave: WorkoutSets | Workout) {
   let allWorkoutsObj: WorkoutList = JSON.parse(allWorkoutsinJson||`""`);
   let existingWorkoutsInDB = allWorkoutsObj;
   let newWorkouts: { [key: string]: Workout };
@@ -47,10 +42,9 @@ export async function createWorkouts( allWorkoutsinJson: string,date: string, wo
     newWorkouts = { ...existingWorkoutsInDB, [date]: completeWorkout };
     allWorkoutsObj = newWorkouts;
   } else {
-    // add to workouts array
-    //workoutToSave={squats:[],deadLift:[]}
-    let workoutsToSaveInSets = workoutsToSave as WorkoutSets;
-    Object.keys(workoutsToSave).forEach((workoutName) => {
+    // workouts has been provided in sets
+    let workoutsToSaveInSets = workoutsToSave.workouts as WorkoutSets;
+    Object.keys(workoutsToSave.workouts).forEach((workoutName) => {
       existingWorkoutsInDB[date].workouts[workoutName] = existingWorkoutsInDB[date].workouts[workoutName] || [];
       existingWorkoutsInDB[date].workouts[workoutName] = [ ...existingWorkoutsInDB[date].workouts[workoutName],...workoutsToSaveInSets[workoutName],
       ];

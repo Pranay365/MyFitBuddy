@@ -40,6 +40,5 @@ export async function getUserfromDB(registrationId: string) {
   } catch (ex: any) {
     return;
   }
-  return;
 }
 //async function login(userid: string, password: string) {}

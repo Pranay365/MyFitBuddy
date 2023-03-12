@@ -113,7 +113,8 @@ app.get("/workouts/:date/:id", isAuthenticated, async function (req, res) {
         date,
         workoutnames as string
       );
-      return res.send(workouts);
+      if (workouts) return res.status(200).send(workouts);
+      else return res.status(404).json(MESSAGE.MESSAGE_WORKOUT_NOT_FOUND);
     }
     return res.status(400).json(MESSAGE.MESSAGE_INAVLID_WORKOUTS);
   } catch (ex: any) {

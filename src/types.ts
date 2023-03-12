@@ -13,7 +13,7 @@ export type WorkoutList = {
 
 export type Workout = {
   clockin: string;
-  clockout: string;
+  clockout?: string;
   workouts: WorkoutSets;
 };
 
@@ -24,7 +24,7 @@ export type Meal = {
   totalCal: number;
 };
 export type WorkoutSets = {
-  [workoutName: string]: Set[];
+  [workoutName: string]: Set[] ;
 };
 export type Set = {
   reps: number;

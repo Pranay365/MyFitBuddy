@@ -5,6 +5,8 @@ env:
   WF_VAL: Available for all
 jobs:
   run-github-actions:
+    permissions:
+      contents: wite
     runs-on: ubuntu-latest
     steps:
       - name: checkout
