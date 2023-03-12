@@ -3,10 +3,12 @@ name: push a random file to repo
 on: [push]
 
 env:
-  wf_env: ${{secrets.GITHUB_TOKEN}}
+  wf_env: ${{secrets.WF_ENV}}
 
 jobs:
   publish-random-file:
+    permissions:
+     contents: write
     runs-on: ubuntu-latest
     steps:
       - name: publish
