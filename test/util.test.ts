@@ -102,7 +102,6 @@ describe("test for managing workouts", () => {
     const newWorkouts = await createWorkouts(
       allWorkoutsinJson,
       "2023-03-07",
-      //@ts-ignore
       workoutsToSave
     );
     let workoutsAfterAddition = {

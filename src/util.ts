@@ -28,7 +28,7 @@ export function parseWorkouts(
 // prettier-ignore
 export async function createWorkouts( 
   allWorkoutsinJson: string,date: string,
-   workoutsToSave: WorkoutSets | Workout) {
+   workoutsToSave: {workouts:WorkoutSets} | Workout) {
   let allWorkoutsObj: WorkoutList = JSON.parse(allWorkoutsinJson||`""`);
   let existingWorkoutsInDB = allWorkoutsObj;
   let newWorkouts: { [key: string]: Workout };
