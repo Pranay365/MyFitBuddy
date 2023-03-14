@@ -5,7 +5,8 @@
 
 module.exports = {
   coverageProvider: "v8",
-  rootDir: "test",
+  testMatch:["**/*.test.ts"],
+  roots:["<rootDir>/test"],
   transformIgnorePatterns: ["<rootDir>/node_modules/"],
   testEnvironment: "node",
   transform: {
