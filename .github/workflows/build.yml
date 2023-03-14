@@ -27,5 +27,11 @@ jobs:
         with:
           name: coverage
           path: coverage
+      - name: Download Artifact to workspace
+        if: github.event_name == 'push'
+        uses: actions/download-artifact@v1
+        with:
+          name: coverage
+          path: coverage
       - name: print env var
         run: echo ${WF_VAL}
