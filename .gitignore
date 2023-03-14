@@ -1,5 +1,5 @@
 node_modules/
-src/nutrition/
+src/nutrition
 src/workouts
 src/config.ts
 dist
