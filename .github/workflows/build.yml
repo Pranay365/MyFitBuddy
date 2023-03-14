@@ -1,6 +1,9 @@
 name: TEST RUNNER FOR MYFITBUDDY
 
-on: [push]
+on:
+  push:
+    branches: [master]
+
 env:
   WF_VAL: Available for all
 jobs:
@@ -16,7 +19,13 @@ jobs:
         uses: actions/setup-node@v3
       - name: install dependencies
         run: npm i
-      - name: run test
-        run: npm test
+      - name: run coverage
+        run: npm test -- --coverage
+      - name: Upload Artifacts
+        if: github.event_name == 'push'
+        uses: actions/upload-artifact@v1
+        with:
+          name: coverage
+          path: coverage
       - name: print env var
         run: echo ${WF_VAL}
