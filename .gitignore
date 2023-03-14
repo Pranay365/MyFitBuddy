@@ -1,4 +1,5 @@
-node_modules
-src/config.ts
+node_modules/
 src/nutrition/
-src/workouts/
+src/workouts
+src/config.ts
+dist
