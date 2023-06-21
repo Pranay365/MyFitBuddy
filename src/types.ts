@@ -17,12 +17,6 @@ export type Workout = {
   workouts: WorkoutSets;
 };
 
-export type Meal = {
-  name: string;
-  composition: any[];
-  time: string;
-  totalCal: number;
-};
 export type WorkoutSets = {
   [workoutName: string]: Set[] ;
 };
@@ -32,6 +26,12 @@ export type Set = {
   time: string;
 };
 
+export type Meal = {
+  name: string;
+  composition: any[];
+  time: string;
+  totalCal: number;
+};
 declare module "express-session" {
   export interface SessionData {
     registrationId: string;

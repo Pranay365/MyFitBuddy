@@ -26,8 +26,7 @@ const workoutSchema = object({
 });
 
 const userSchema = object({
-  id: string().min(4).max(7).matches(/\w/).required(),
-  name: string().min(4).max(8).matches(/\w/).required(),
+  username: string().min(4).max(7).matches(/\w/).required(),
   password: string().min(6).max(8).required(),
   confirmPassword: string()
     .oneOf([ref("password")])
