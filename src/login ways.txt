@@ -1,0 +1,17 @@
+1) return user details from BE after login
+2) store the session in cookie in FE
+3) store the user details after login to localstorage
+4) store the registrationId in cookie in browser
+
+
+next login
+ 1) check the localstorage to see that the user exists
+ 2) read user details from localstorage
+ 3) if user exists get user details and load the app
+ 4) if it doesn't exists or the session has expired remove the existing user details from localstorage
+    and make an api call to BE and load the user.
+
+in be
+  1) if there is a valid cookie(cookie associate to some user) return the userdetails from registrationId
+  2) else use the email and password to authenticate and store the cookie and also set it in the header
+  3) send the user details in response.

@@ -1,0 +1,20 @@
+[
+    {
+        "clockin": "09:36",
+        "clockout": "09:40",
+        "type": "weight",
+        "date": "2023-09-10",
+        "workouts": [
+            {
+                "reps": 20,
+                "weight": 10,
+                "name": "pushups"
+            },
+            {
+                "distance": 1.5,
+                "time": 0.3,
+                "name": "running"
+            }
+        ]
+    }
+]
