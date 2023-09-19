@@ -4,7 +4,7 @@
   "description": "Track your overall fitness goals using myfitbuudy",
   "main": "dist/index.js",
   "scripts": {
-    "start": "nodemon src/index.ts",
+    "start": "node dist/src/index.js",
     "build": "tsc",
     "test": "jest"
   },

@@ -3,7 +3,6 @@ src/nutrition
 src/workouts
 src/config.ts
 coverage
-dist/
 src/session.json
 src/users.json
 

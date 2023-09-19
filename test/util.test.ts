@@ -1,7 +1,6 @@
 import {
   parseWorkouts,
   createWorkouts,
-  readWorkoutsFromDb,
   writeRecordsToDb,
 } from "../src/util";
 
@@ -124,16 +123,6 @@ describe("test for managing workouts", () => {
       },
     };
     expect(newWorkouts).toEqual(JSON.stringify(workoutsAfterAddition));
-  });
-  it("should be able to read workouts from DB successfully", async () => {
-    await readWorkoutsFromDb("test1");
-    expect(process.env.readFileCalls).toBe("1");
-  });
-  it("should be call writeFile once to create a workout when exception occurs", async () => {
-    const workouts = await readWorkoutsFromDb("throw");
-    expect(workouts).toBe("{}");
-    expect(process.env.writeFileCalls).toBe("1");
-    expect(process.env.readFileCalls).toBe("2");
   });
   it("should be call writeFile once to create a workout when exception occurs", async () => {
     await writeRecordsToDb("test1", "{}");

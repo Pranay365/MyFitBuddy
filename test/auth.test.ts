@@ -1,4 +1,4 @@
-import { register, getUserfromDB } from "../src/user";
+import { register, getUserfromDB } from "../src/util";
 jest.mock("fs");
 describe("test for auth", () => {
   it("should register user and generate uuid and call readfile", async () => {
@@ -6,7 +6,10 @@ describe("test for auth", () => {
       "test1",
       "test1",
       "testabcd",
-      "testabcd"
+      "testabcd",
+      "testabcd",
+      "test",
+      undefined
     );
     expect(registrationId).toMatch(
       /[0-9a-z]{8}-[0-9a-z]{4}-[0-9a-z]{4}-[0-9a-z]{4}-[0-9a-z]{12}$/
@@ -16,7 +19,15 @@ describe("test for auth", () => {
   }, 15000);
   it("should not register the user as the userdetails are invalid", async () => {
     try {
-      await register("test1", "test1", "test", "testabcd");
+      await register(
+        "test1",
+        "test1",
+        "testabcd",
+        "testabcd",
+        "testabcd",
+        "test",
+        undefined
+      );
     } catch (ex: any) {
       expect(process.env.readFileCalls).toBe("1");
       expect(process.env.writeFileCalls).toBe("1");

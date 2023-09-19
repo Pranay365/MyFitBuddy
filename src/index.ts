@@ -59,4 +59,4 @@ app.post("/nutrition", isAuthenticated, saveUsersNutrion);
 
 app.get("/foods", isAuthenticated,getAllAvailableFoods);
 
-app.listen(3000, () => console.log("started listening"));
+app.listen(process.env.PORT || 3000, () => console.log("started listening"));
