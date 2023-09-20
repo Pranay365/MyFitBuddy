@@ -30,7 +30,9 @@ const upload = multer({
 });
 
 // authentication
-
+app.get("/",(req,res)=>{
+  res.send("Hi");
+})
 app.post("/signup", upload.single("avatar"), signup);
 
 app.get("/logout", isAuthenticated, logout);
