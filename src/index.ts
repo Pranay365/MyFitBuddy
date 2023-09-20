@@ -3,19 +3,17 @@ import express from "express";
 import multer from "multer";
 import bodyParser from "body-parser";
 import cors from "cors";
-import {  getUserProfilePic, user, userSettings } from "./user";
+import { getUserProfilePic, user, userSettings } from "./user";
 import { isAuthenticated, login, logout, signup } from "./auth";
 import { createWorkout, getWorkouts } from "./workouts";
-import { getAllAvailableFoods, getNutrition, saveUsersNutrion } from "./nutrition";
+import {
+  getAllAvailableFoods,
+  getNutrition,
+  saveUsersNutrion,
+} from "./nutrition";
 const app = express();
 
-app.use(
-  cors({
-    origin: ["*", "http://localhost:5173"],
-    methods: ["POST", "PUT", "GET", "OPTIONS", "HEAD"],
-    credentials: true,
-  })
-);
+app.use(cors({ origin: "*" }));
 
 app.use(bodyParser.json());
 
@@ -37,26 +35,26 @@ app.post("/signup", upload.single("avatar"), signup);
 
 app.get("/logout", isAuthenticated, logout);
 
-app.post("/login",login);
+app.post("/login", login);
 
-// users 
+// users
 app.get("/user", isAuthenticated, user);
 
 app.post("/users/settings", isAuthenticated, userSettings);
 
-app.get("/users/:name/profile", isAuthenticated,getUserProfilePic);
+app.get("/users/:name/profile", isAuthenticated, getUserProfilePic);
 
 // workouts
 
 app.get("/workouts", isAuthenticated, getWorkouts);
 
-app.post("/workouts", isAuthenticated,createWorkout );
+app.post("/workouts", isAuthenticated, createWorkout);
 
 // nutrition
-app.get("/nutrition", isAuthenticated,getNutrition);
+app.get("/nutrition", isAuthenticated, getNutrition);
 
 app.post("/nutrition", isAuthenticated, saveUsersNutrion);
 
-app.get("/foods", isAuthenticated,getAllAvailableFoods);
+app.get("/foods", isAuthenticated, getAllAvailableFoods);
 
 app.listen(process.env.PORT || 3000, () => console.log("started listening"));
