@@ -2,8 +2,7 @@ node_modules/
 src/nutrition
 src/workouts
 coverage
-src/session.json
-src/users.json
+
 
 
 # Local Netlify folder
