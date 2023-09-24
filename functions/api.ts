@@ -15,7 +15,7 @@ import {
 } from "../src/nutrition";
 const app = express();
 const router = express.Router();
-app.use(cors({ origin: "*" }));
+app.use(cors({ origin: ["htpp://localhost:5173"], credentials: true }));
 
 app.use(bodyParser.json());
 
@@ -60,6 +60,6 @@ router.get("/nutrition", isAuthenticated, getNutrition);
 router.post("/nutrition", isAuthenticated, saveUsersNutrion);
 
 router.get("/foods", isAuthenticated, getAllAvailableFoods);
-app.use("/",router);
+app.use("/", router);
 //app.listen(process.env.PORT || 3000, () => console.log("started listening"));
 export const handler = serverless(app);
