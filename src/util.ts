@@ -5,11 +5,12 @@ import { isValidUser, isValidWorkouts } from "./validation";
 import { Workout } from "./workout.types";
 import { v4 } from "uuid";
 import { hash } from "bcryptjs";
+import { srcDir } from "./config";
 export const readFilePromise = promisify(readFile);
 export const writeFilePromise = promisify(writeFile);
 export const mkdirPromise=promisify(mkdir);
 export async function getHealthStats(username:string){
-  const filePath=`${join(__dirname,username,"stats")}.json`;
+  const filePath=`${join(srcDir,username,"stats")}.json`;
   const healthStats=await readFilePromise(filePath,"utf-8")||"``";
   return JSON.parse(healthStats);
 }
@@ -27,8 +28,8 @@ export async function register(
   const hashedPassword = await hash(password, 8);
   const registrationId = v4();
   const date = new Date();
-  const filePath = `${join(__dirname, "users")}.json`;
-  const userDir = `${join(__dirname, username)}`;
+  const filePath = `${join(srcDir, "users")}.json`;
+  const userDir = `${join(srcDir, username)}`;
   const statsPath = `${join(userDir, "stats")}.json`;
   const nutritionPath = `${join(userDir, "nutrition")}.json`;
   const workoutsPath = `${join(userDir, "workouts")}.json`;
@@ -56,7 +57,7 @@ export async function register(
 }
 export async function getUserProfile(username) {
   const profileJSON = await readFilePromise(
-    `${join(__dirname, "users")}.json`,
+    `${join(srcDir, "users")}.json`,
     "utf-8"
   );
   const profile = JSON.parse(profileJSON);
@@ -67,7 +68,7 @@ export async function getUserProfile(username) {
 }
 export async function getUserfromDB(username: string) {
   try {
-    const filePath = `${join(__dirname, "users")}.json`;
+    const filePath = `${join(srcDir, "users")}.json`;
     const userObjInJson = await readFilePromise(filePath, "utf-8");
     const userObj = JSON.parse(userObjInJson);
     return userObj[username];
@@ -139,7 +140,7 @@ export async function createWorkouts(
 
 export async function readDataFromDb(id: string, type: string) {
   //{date:{}}
-  const filePath = `${join(__dirname, id, type)}.json`;
+  const filePath = `${join(srcDir, id, type)}.json`;
   const emptyData = JSON.stringify({});
   try {
     const allrecords = await readFilePromise(filePath, "utf-8");
@@ -152,7 +153,7 @@ export async function readDataFromDb(id: string, type: string) {
   }
 }
 export async function getAllFoodsFromDB() {
-  const filePath = `${join(__dirname, "data", "foods")}.json`;
+  const filePath = `${join(srcDir, "data", "foods")}.json`;
   const allFoods = await readFilePromise(filePath, "utf-8");
   return allFoods;
 }
@@ -162,14 +163,14 @@ export async function saveNutrionToDb(id: string, data) {
   //2. if nutrion exists add to current date
   //3. else create a new entry for todays date and add carb,fat,protein and cal to it
   //3. save the details to db.
-  const filePath = `${join(__dirname, id, "nutrition")}.json`;
+  const filePath = `${join(srcDir, id, "nutrition")}.json`;
   await writeFilePromise(filePath, data);
   const allNutrition = await readFilePromise(filePath, "utf-8");
   return allNutrition;
 }
 export async function saveWorkoutsToDb(id: string, data: Workout) {
   let dataToSave = {};
-  const filePath = `${join(__dirname, id, "workouts")}.json`;
+  const filePath = `${join(srcDir, id, "workouts")}.json`;
   try {
     const existingDataInDB = await readFilePromise(filePath, "utf-8");
     let existingWorkouts = JSON.parse(existingDataInDB);
@@ -231,7 +232,7 @@ export async function saveNutritionDetailsToDB(
   id: string,
   rawNutrionData: any
 ) {
-  const filePath = `${join(__dirname, id, "nutrition")}.json`;
+  const filePath = `${join(srcDir, id, "nutrition")}.json`;
 
   try {
     const existingDataInDB = await readFilePromise(filePath, "utf-8");
@@ -272,7 +273,7 @@ export async function saveNutritionDetailsToDB(
   }
 }
 export async function saveSettings(username:string,heartbeat:number,maintenance_cal:number,sleep:number){
-    const filepath=`${join(__dirname,username,"stats")}.json`;
+    const filepath=`${join(srcDir,username,"stats")}.json`;
     const allSettingsJSON=await readFilePromise(filepath,"utf-8");
     const allSettings=JSON.parse(allSettingsJSON);
     const newSettings={...allSettings,heartbeat,sleep,maintenance_cal};
@@ -280,7 +281,7 @@ export async function saveSettings(username:string,heartbeat:number,maintenance_
     return newSettings;
 }
 export async function writeRecordsToDb(id: string, newWorkouts: string) {
-  const filePath = `${join(__dirname, "workouts", id)}.json`;
+  const filePath = `${join(srcDir, "workouts", id)}.json`;
   try {
     return await writeFilePromise(filePath, newWorkouts);
   } catch (ex) {
@@ -302,7 +303,7 @@ function getFormattedTime() {
 // ) {
 //   // call filesystem to get the stats for a workout
 //   try {
-//     let filepath = `${join(__dirname, "workouts", id)}.json`;
+//     let filepath = `${join(srcDir, "workouts", id)}.json`;
 //     const workoutRecordInJson = await readFilePromise(filepath, "utf-8");
 //     const workoutRecordObj = JSON.parse(workoutRecordInJson);
 //     // parse workoutsrecord and find the given workoutname stats

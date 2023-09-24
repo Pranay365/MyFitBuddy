@@ -75,6 +75,7 @@ function signup(req, res, next) {
             const username = email === null || email === void 0 ? void 0 : email.split("@")[0];
             const registrationId = yield (0, util_1.register)(username, password, confirmPassword, email, first_name, last_name, avatar);
             if (registrationId) {
+                res.setHeader("Access-Control-Allow-Origin", "*");
                 return res.status(200).json({
                     status: constants_1.MESSAGE.MESSAGE_REGISTRATION_SUCESS,
                     body: JSON.stringify({ registrationId }),

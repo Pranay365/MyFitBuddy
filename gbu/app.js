@@ -2,7 +2,7 @@ import express from "express";
 
 //import multer from "multer";
 import serverless from "serverless-http";
-import bodyParser from "body-parser";
+//import bodyParser from "body-parser";
 import cors from "cors";
 // import { getUserProfilePic, user, userSettings } from "./user";
 // import { isAuthenticated, login, logout, signup } from "./auth";
@@ -13,11 +13,11 @@ import cors from "cors";
 //   saveUsersNutrion,
 // } from "./nutrition";
 const app = express();
-const router=express.Router();
+const router = express.Router();
 //app.use(cors({ origin: "*" }));
 
-app.use(bodyParser.json());
-app.use("/.netlify/functions/",router);
+//app.use(bodyParser.json());
+app.use("/.netlify/functions/", router);
 // const upload = multer({
 //   limits: {
 //     fileSize: 1000000,
@@ -31,9 +31,9 @@ app.use("/.netlify/functions/",router);
 // });
 
 // authentication
-router.get("/",(req,res)=>{
+router.get("/", (req, res) => {
   res.send("Hi");
-})
+});
 // router.post("/signup", upload.single("avatar"), signup);
 
 // router.get("/logout", isAuthenticated, logout);
@@ -61,4 +61,4 @@ router.get("/",(req,res)=>{
 // router.get("/foods", isAuthenticated, getAllAvailableFoods);
 
 //app.listen(process.env.PORT || 3000, () => console.log("started listening"));
-export const handler=serverless(app);
+export const handler = serverless(app);

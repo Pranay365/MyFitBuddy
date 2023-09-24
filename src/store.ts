@@ -1,19 +1,20 @@
+import { srcDir } from "./config";
 import { readFilePromise,writeFilePromise } from "./util";
 
 class Store {
     cookies:{name:string,value:string,username:string,expires:string}[]=[];
     destroy(index:number){
         this.cookies.splice(index,1);
-        return writeFilePromise(__dirname+"/session.json",JSON.stringify(this.cookies))
+        return writeFilePromise(srcDir + "/session.json",JSON.stringify(this.cookies))
     }
     async isValid(name:string,value:any,username:string){
-        if(!this.cookies.length) this.cookies=JSON.parse(await readFilePromise(__dirname+"/session.json","utf-8")||"[]");
+        if(!this.cookies.length) this.cookies=JSON.parse(await readFilePromise(srcDir+"/session.json","utf-8")||"[]");
         return !!this.cookies?.find(cookie=>cookie.username==username && cookie.name==name && cookie.value==value && cookie.expires>new Date().toISOString())
     }
     async get(value:string){
         let cookie,foundIndex:number=-1;
         if(!this.cookies.length){
-            this.cookies=JSON.parse(await readFilePromise(__dirname+"/session.json","utf-8")||"[]");
+            this.cookies=JSON.parse(await readFilePromise(srcDir+"/session.json","utf-8")||"[]");
         }
         for(let i=0;i<this.cookies?.length;i++){
             if(this.cookies[i].value===value){
@@ -29,19 +30,19 @@ class Store {
         return cookie;
     }
    async set(username:string,name:string,value:string){
-        if(!this.cookies.length) this.cookies=JSON.parse(await readFilePromise(__dirname+"/session.json","utf-8")||"[]");
+        if(!this.cookies.length) this.cookies=JSON.parse(await readFilePromise(srcDir+"/session.json","utf-8")||"[]");
         let expires = new Date().getTime() + 24 * 60 * 60 * 1000;
         this.cookies=this.cookies.filter(cookie=>cookie.value!==value);
         this.cookies.push({name,value,username,expires:new Date(expires).toISOString()});
-        return writeFilePromise(__dirname+"/session.json",JSON.stringify(this.cookies))
+        return writeFilePromise(srcDir + "/session.json",JSON.stringify(this.cookies))
     }
     async remove(value:string){
         if(!this.cookies.length) this.cookies = JSON.parse(
-          (await readFilePromise(__dirname + "/session.json", "utf-8")) || "[]"
+          (await readFilePromise(srcDir + "/session.json", "utf-8")) || "[]"
         );
         this.cookies=this.cookies.filter(cookie=>cookie.value!==value);
         return writeFilePromise(
-          __dirname + "/session.json",
+          srcDir + "/session.json",
           JSON.stringify(this.cookies)
         );
     }

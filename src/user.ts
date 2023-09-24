@@ -1,8 +1,7 @@
-import { readFilePromise, writeFilePromise, mkdirPromise, getHealthStats, saveSettings, getUserProfile } from "./util";
-import path, { join } from "path";
-import { v4 } from "uuid";
-import { isValidUser } from "./validation";
-import { hash } from "bcryptjs";
+import { srcDir } from "./config";
+import { getHealthStats, getUserProfile, readFilePromise, saveSettings, } from "./util";
+import path from "path";
+
 
 export async function user(req,res){
   const userObj = req.user;
@@ -34,7 +33,7 @@ export async function userSettings(req,res){
      res.send(profile);
     }
     else{
-      const defaultFile=await readFilePromise(path.join(__dirname,"default-user.jpg"))
+      const defaultFile=await readFilePromise(path.join(srcDir,"default-user.jpg"))
       res.send(defaultFile);
     }
  };
