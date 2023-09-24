@@ -1,7 +1,6 @@
 node_modules/
 src/nutrition
 src/workouts
-src/config.ts
 coverage
 src/session.json
 src/users.json
