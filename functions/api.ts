@@ -15,7 +15,8 @@ import {
 } from "../src/nutrition";
 const app = express();
 const router = express.Router();
-app.use(cors({ origin: ["htpp://localhost:5173"], credentials: true }));
+
+app.use(cors({origin:["*","http://localhost:5173"],credentials:true}));
 
 app.use(bodyParser.json());
 

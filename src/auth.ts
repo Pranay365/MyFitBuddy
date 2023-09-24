@@ -69,7 +69,6 @@ export async function signup (req, res, next) {
       avatar
     );
     if (registrationId) {
-      res.setHeader("Access-Control-Allow-Origin","*");
       return res.status(200).json({
         status: MESSAGE.MESSAGE_REGISTRATION_SUCESS,
         body: JSON.stringify({ registrationId }),
