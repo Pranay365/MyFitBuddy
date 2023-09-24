@@ -13,6 +13,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.getUserProfilePic = exports.userSettings = exports.user = void 0;
+const config_1 = require("./config");
 const util_1 = require("./util");
 const path_1 = __importDefault(require("path"));
 function user(req, res) {
@@ -46,7 +47,7 @@ function getUserProfilePic(req, res) {
             res.send(profile);
         }
         else {
-            const defaultFile = yield (0, util_1.readFilePromise)(path_1.default.join(__dirname, "default-user.jpg"));
+            const defaultFile = yield (0, util_1.readFilePromise)(path_1.default.join(config_1.srcDir, "default-user.jpg"));
             res.send(defaultFile);
         }
     });

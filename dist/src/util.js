@@ -16,12 +16,13 @@ const path_1 = require("path");
 const validation_1 = require("./validation");
 const uuid_1 = require("uuid");
 const bcryptjs_1 = require("bcryptjs");
+const config_1 = require("./config");
 exports.readFilePromise = (0, util_1.promisify)(fs_1.readFile);
 exports.writeFilePromise = (0, util_1.promisify)(fs_1.writeFile);
 exports.mkdirPromise = (0, util_1.promisify)(fs_1.mkdir);
 function getHealthStats(username) {
     return __awaiter(this, void 0, void 0, function* () {
-        const filePath = `${(0, path_1.join)(__dirname, username, "stats")}.json`;
+        const filePath = `${(0, path_1.join)(config_1.srcDir, username, "stats")}.json`;
         const healthStats = (yield (0, exports.readFilePromise)(filePath, "utf-8")) || "``";
         return JSON.parse(healthStats);
     });
@@ -33,8 +34,8 @@ function register(username, password, confirmPassword, email, first_name, last_n
         const hashedPassword = yield (0, bcryptjs_1.hash)(password, 8);
         const registrationId = (0, uuid_1.v4)();
         const date = new Date();
-        const filePath = `${(0, path_1.join)(__dirname, "users")}.json`;
-        const userDir = `${(0, path_1.join)(__dirname, username)}`;
+        const filePath = `${(0, path_1.join)(config_1.srcDir, "users")}.json`;
+        const userDir = `${(0, path_1.join)(config_1.srcDir, username)}`;
         const statsPath = `${(0, path_1.join)(userDir, "stats")}.json`;
         const nutritionPath = `${(0, path_1.join)(userDir, "nutrition")}.json`;
         const workoutsPath = `${(0, path_1.join)(userDir, "workouts")}.json`;
@@ -64,7 +65,7 @@ exports.register = register;
 function getUserProfile(username) {
     var _a, _b;
     return __awaiter(this, void 0, void 0, function* () {
-        const profileJSON = yield (0, exports.readFilePromise)(`${(0, path_1.join)(__dirname, "users")}.json`, "utf-8");
+        const profileJSON = yield (0, exports.readFilePromise)(`${(0, path_1.join)(config_1.srcDir, "users")}.json`, "utf-8");
         const profile = JSON.parse(profileJSON);
         console.log(profile[username], username);
         return ((_a = profile[username]) === null || _a === void 0 ? void 0 : _a.avatar)
@@ -76,7 +77,7 @@ exports.getUserProfile = getUserProfile;
 function getUserfromDB(username) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
-            const filePath = `${(0, path_1.join)(__dirname, "users")}.json`;
+            const filePath = `${(0, path_1.join)(config_1.srcDir, "users")}.json`;
             const userObjInJson = yield (0, exports.readFilePromise)(filePath, "utf-8");
             const userObj = JSON.parse(userObjInJson);
             return userObj[username];
@@ -149,7 +150,7 @@ exports.createWorkouts = createWorkouts;
 function readDataFromDb(id, type) {
     return __awaiter(this, void 0, void 0, function* () {
         //{date:{}}
-        const filePath = `${(0, path_1.join)(__dirname, id, type)}.json`;
+        const filePath = `${(0, path_1.join)(config_1.srcDir, id, type)}.json`;
         const emptyData = JSON.stringify({});
         try {
             const allrecords = yield (0, exports.readFilePromise)(filePath, "utf-8");
@@ -166,7 +167,7 @@ function readDataFromDb(id, type) {
 exports.readDataFromDb = readDataFromDb;
 function getAllFoodsFromDB() {
     return __awaiter(this, void 0, void 0, function* () {
-        const filePath = `${(0, path_1.join)(__dirname, "data", "foods")}.json`;
+        const filePath = `${(0, path_1.join)(config_1.srcDir, "data", "foods")}.json`;
         const allFoods = yield (0, exports.readFilePromise)(filePath, "utf-8");
         return allFoods;
     });
@@ -178,7 +179,7 @@ function saveNutrionToDb(id, data) {
         //2. if nutrion exists add to current date
         //3. else create a new entry for todays date and add carb,fat,protein and cal to it
         //3. save the details to db.
-        const filePath = `${(0, path_1.join)(__dirname, id, "nutrition")}.json`;
+        const filePath = `${(0, path_1.join)(config_1.srcDir, id, "nutrition")}.json`;
         yield (0, exports.writeFilePromise)(filePath, data);
         const allNutrition = yield (0, exports.readFilePromise)(filePath, "utf-8");
         return allNutrition;
@@ -188,7 +189,7 @@ exports.saveNutrionToDb = saveNutrionToDb;
 function saveWorkoutsToDb(id, data) {
     return __awaiter(this, void 0, void 0, function* () {
         let dataToSave = {};
-        const filePath = `${(0, path_1.join)(__dirname, id, "workouts")}.json`;
+        const filePath = `${(0, path_1.join)(config_1.srcDir, id, "workouts")}.json`;
         try {
             const existingDataInDB = yield (0, exports.readFilePromise)(filePath, "utf-8");
             let existingWorkouts = JSON.parse(existingDataInDB);
@@ -242,7 +243,7 @@ function calculateCaloriesFromQty(calPer100, quantity) {
 }
 function saveNutritionDetailsToDB(id, rawNutrionData) {
     return __awaiter(this, void 0, void 0, function* () {
-        const filePath = `${(0, path_1.join)(__dirname, id, "nutrition")}.json`;
+        const filePath = `${(0, path_1.join)(config_1.srcDir, id, "nutrition")}.json`;
         try {
             const existingDataInDB = yield (0, exports.readFilePromise)(filePath, "utf-8");
             let allentries = JSON.parse(existingDataInDB) || [];
@@ -279,7 +280,7 @@ function saveNutritionDetailsToDB(id, rawNutrionData) {
 exports.saveNutritionDetailsToDB = saveNutritionDetailsToDB;
 function saveSettings(username, heartbeat, maintenance_cal, sleep) {
     return __awaiter(this, void 0, void 0, function* () {
-        const filepath = `${(0, path_1.join)(__dirname, username, "stats")}.json`;
+        const filepath = `${(0, path_1.join)(config_1.srcDir, username, "stats")}.json`;
         const allSettingsJSON = yield (0, exports.readFilePromise)(filepath, "utf-8");
         const allSettings = JSON.parse(allSettingsJSON);
         const newSettings = Object.assign(Object.assign({}, allSettings), { heartbeat, sleep, maintenance_cal });
@@ -290,7 +291,7 @@ function saveSettings(username, heartbeat, maintenance_cal, sleep) {
 exports.saveSettings = saveSettings;
 function writeRecordsToDb(id, newWorkouts) {
     return __awaiter(this, void 0, void 0, function* () {
-        const filePath = `${(0, path_1.join)(__dirname, "workouts", id)}.json`;
+        const filePath = `${(0, path_1.join)(config_1.srcDir, "workouts", id)}.json`;
         try {
             return yield (0, exports.writeFilePromise)(filePath, newWorkouts);
         }
@@ -312,7 +313,7 @@ function getFormattedTime() {
 // ) {
 //   // call filesystem to get the stats for a workout
 //   try {
-//     let filepath = `${join(__dirname, "workouts", id)}.json`;
+//     let filepath = `${join(srcDir, "workouts", id)}.json`;
 //     const workoutRecordInJson = await readFilePromise(filepath, "utf-8");
 //     const workoutRecordObj = JSON.parse(workoutRecordInJson);
 //     // parse workoutsrecord and find the given workoutname stats
