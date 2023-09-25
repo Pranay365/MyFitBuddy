@@ -1,7 +1,7 @@
 import path from "path";
 import { srcDir } from "./config";
 import { readFilePromise, writeFilePromise } from "./util";
-
+import * as dummyJson from "./session.json";
 class Store {
   cookies: {
     name: string;
@@ -34,6 +34,7 @@ class Store {
     let cookie,
       foundIndex: number = -1;
     if (!this.cookies.length) {
+        const json=dummyJson;
       this.cookies = JSON.parse(
         (await readFilePromise(path.join(srcDir, "session.json"), "utf-8")) ||
           "[]"
