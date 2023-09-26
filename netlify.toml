@@ -1,6 +1,7 @@
 [build]
  functions='./functions'
- included_files=["src/session.json","src/users.json"]
+[functions]
+  included_files=["src/session.json","src/users.json"]
  
 
 [[redirects]]
