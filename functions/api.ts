@@ -5,18 +5,18 @@ import serverless from "serverless-http";
 import bodyParser from "body-parser";
 import cors from "cors";
 import multer from "multer";
-import { getUserProfilePic, user, userSettings } from "../src/user";
-import { isAuthenticated, login, logout, signup } from "../src/auth";
-import { createWorkout, getWorkouts } from "../src/workouts";
+import { getUserProfilePic, user, userSettings } from "../tmp/user";
+import { isAuthenticated, login, logout, signup } from "../tmp/auth";
+import { createWorkout, getWorkouts } from "../tmp/workouts";
 import {
   getAllAvailableFoods,
   getNutrition,
   saveUsersNutrion,
-} from "../src/nutrition";
+} from "../tmp/nutrition";
 const app = express();
 const router = express.Router();
 
-app.use(cors({origin:["*","http://localhost:5173"],credentials:true}));
+app.use(cors({ origin: ["*", "http://localhost:5173"], credentials: true }));
 
 app.use(bodyParser.json());
 

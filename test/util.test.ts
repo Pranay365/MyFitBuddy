@@ -1,8 +1,4 @@
-import {
-  parseWorkouts,
-  createWorkouts,
-  writeRecordsToDb,
-} from "../src/util";
+import { parseWorkouts, createWorkouts, writeRecordsToDb } from "../tmp/util";
 
 jest.mock("fs");
 describe("test for managing workouts", () => {

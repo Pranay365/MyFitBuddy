@@ -1,4 +1,4 @@
-import { register, getUserfromDB } from "../src/util";
+import { register, getUserfromDB } from "../tmp/util";
 jest.mock("fs");
 describe("test for auth", () => {
   it("should register user and generate uuid and call readfile", async () => {
