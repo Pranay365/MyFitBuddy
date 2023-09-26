@@ -1,6 +1,8 @@
 [build]
  functions='./functions'
+ included_files=["src/session.json","src/users.json"]
  
+
 [[redirects]]
   force = true
   from ="/*"

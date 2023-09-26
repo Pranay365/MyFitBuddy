@@ -2,6 +2,7 @@ import path from "path";
 import { srcDir } from "./config";
 import { readFilePromise, writeFilePromise } from "./util";
 import * as dummyJson from "./session.json";
+console.log(dummyJson);
 class Store {
   cookies: {
     name: string;
