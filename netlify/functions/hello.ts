@@ -5,7 +5,9 @@ const router=Router();
 
 const app=express();
 
-
+router.get("/",(req,res)=>{
+    res.send("Hi");
+})
 router.get("/hello",(req,res)=>{
     res.send("hello");
 })

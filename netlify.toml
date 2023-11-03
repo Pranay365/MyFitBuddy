@@ -1,11 +1,9 @@
 [build]
  functions='./functions'
-[functions]
-  included_files=["tmp/session.json","tmp/users.json"]
  
 
 [[redirects]]
   force = true
-  from ="/*"
+  from ="/api/*"
   status = 200
-  to = "/.netlify/functions/api"
+  to = "/.netlify/functions/api/:splat"

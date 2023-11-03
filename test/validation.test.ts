@@ -1,5 +1,5 @@
 import { ValidationError } from "yup";
-import { isValidUser, isValidWorkouts } from "../tmp/validation";
+import { isValidUser, isValidWorkouts } from "../src/validation";
 
 describe("test for validating user details", () => {
   it("should validate user successfully", async () => {

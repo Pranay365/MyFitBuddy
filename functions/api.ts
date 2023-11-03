@@ -4,63 +4,75 @@ import express from "express";
 import serverless from "serverless-http";
 import bodyParser from "body-parser";
 import cors from "cors";
-import multer from "multer";
-import { getUserProfilePic, user, userSettings } from "../tmp/user";
-import { isAuthenticated, login, logout, signup } from "../tmp/auth";
-import { createWorkout, getWorkouts } from "../tmp/workouts";
+import cookieParser from "cookie-parser";
+// import { getUserProfilePic, user, userSettings } from "./user";
+import { authorized, login, signup } from "../src/auth";
+import { createWorkout, getWorkouts } from "../src/workouts";
 import {
   getAllAvailableFoods,
-  getNutrition,
+  getUsersNutrition,
   saveUsersNutrion,
-} from "../tmp/nutrition";
+} from "../src/nutrition";
+import { getUser, saveUserSettings } from "../src/user";
+import asyncHandler from "../src/middleware/asyncHandler";
+import errorHandler from "../src/middleware/ErrorHandler";
+import { connectDb } from "../src/middleware/connectDb";
+
 const app = express();
 const router = express.Router();
 
-app.use(cors({ origin: ["*", "http://localhost:5173"], credentials: true }));
+app.use(cors({ origin: "*" }));
 
 app.use(bodyParser.json());
+app.use(cookieParser());
+app.use("/api/", router);
 
-const upload = multer({
-  limits: {
-    fileSize: 1000000,
-  },
-  fileFilter(req, file, cb) {
-    console.log("file is", file);
-    if (file && !file.originalname.toLowerCase().match(/\.(png|jpg|jpeg)$/))
-      return cb(new Error("Please upload png or jpg images"));
-    cb(null, true);
-  },
-});
-
-// authentication
 router.get("/", (req, res) => {
   res.send("Hi");
 });
-router.post("/signup", upload.single("avatar"), signup);
+router.get("/hello", connectDb, authorized, function (req: any, res, next) {
+  res.status(200).json({ success: true, data: req.user });
+});
+router.post("/signup", connectDb, asyncHandler(signup));
 
-router.get("/logout", isAuthenticated, logout);
+// router.get("/logout", isAuthenticated, logout);
 
-router.post("/login", login);
+router.post("/login", connectDb, asyncHandler(login));
 
-// users
-router.get("/user", isAuthenticated, user);
+router.get("/user/me", connectDb, authorized, asyncHandler(getUser));
 
-router.post("/users/settings", isAuthenticated, userSettings);
+router.post(
+  "/user/setting",
+  connectDb,
+  authorized,
+  asyncHandler(saveUserSettings)
+);
 
-router.get("/users/:name/profile", isAuthenticated, getUserProfilePic);
+// router.get("/users/:name/profile", isAuthenticated, getUserProfilePic);
 
 // // workouts
 
-router.get("/workouts", isAuthenticated, getWorkouts);
+router.get("/workouts", connectDb, authorized, asyncHandler(getWorkouts));
 
-router.post("/workouts", isAuthenticated, createWorkout);
+router.post("/workouts", connectDb, authorized, asyncHandler(createWorkout));
 
-// nutrition
-router.get("/nutrition", isAuthenticated, getNutrition);
+// // nutrition
+router.get(
+  "/nutrition",
+  connectDb,
+  authorized,
+  asyncHandler(getUsersNutrition)
+);
 
-router.post("/nutrition", isAuthenticated, saveUsersNutrion);
+router.post(
+  "/nutrition",
+  connectDb,
+  authorized,
+  asyncHandler(saveUsersNutrion)
+);
 
-router.get("/foods", isAuthenticated, getAllAvailableFoods);
-app.use("/", router);
+router.get("/foods", connectDb, authorized, asyncHandler(getAllAvailableFoods));
+
+app.use(errorHandler);
 //app.listen(process.env.PORT || 3000, () => console.log("started listening"));
 export const handler = serverless(app);
