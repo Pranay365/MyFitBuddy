@@ -21,12 +21,12 @@ import {photoHandler} from "../src/middleware/photoHandler";
 const app = express();
 const router = express.Router();
 
-app.use(
-  cors({
-    origin: ["http://localhost:5173", "https://fitfreaks.netlify.app/"],
-    credentials: true,
-  })
-);
+app.use((req,res,next)=>{
+  res.setHeader("Access-Control-Allow-Origin","*");
+  res.setHeader("Access-Control-Allow-Methods","GET,POST,PUT,PATCH,DELETE");
+  res.setHeader("Access-Control-Allow-Headers","Content-Type,Authorization");
+  next();
+});
 
 app.use(bodyParser.json());
 app.use(cookieParser());
