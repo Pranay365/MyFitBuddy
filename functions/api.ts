@@ -17,11 +17,16 @@ import { getUser, saveUserSettings } from "../src/user";
 import asyncHandler from "../src/middleware/asyncHandler";
 import errorHandler from "../src/middleware/ErrorHandler";
 import { connectDb } from "../src/middleware/connectDb";
-
+import {photoHandler} from "../src/middleware/photoHandler";
 const app = express();
 const router = express.Router();
 
-app.use(cors({ origin: "*" }));
+app.use(
+  cors({
+    origin: ["http://localhost:5173", "https://fitfreaks.netlify.app/"],
+    credentials: true,
+  })
+);
 
 app.use(bodyParser.json());
 app.use(cookieParser());
@@ -33,7 +38,8 @@ router.get("/", (req, res) => {
 router.get("/hello", connectDb, authorized, function (req: any, res, next) {
   res.status(200).json({ success: true, data: req.user });
 });
-router.post("/signup", connectDb, asyncHandler(signup));
+router.post("/signup", connectDb,asyncHandler(photoHandler), asyncHandler(signup));
+
 
 // router.get("/logout", isAuthenticated, logout);
 
@@ -42,7 +48,7 @@ router.post("/login", connectDb, asyncHandler(login));
 router.get("/user/me", connectDb, authorized, asyncHandler(getUser));
 
 router.post(
-  "/user/setting",
+  "/user/settings",
   connectDb,
   authorized,
   asyncHandler(saveUserSettings)

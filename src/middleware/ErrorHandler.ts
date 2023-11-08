@@ -1,5 +1,6 @@
 import ErrorResponse from "../ErrorResponse";
 export default function errorHandler(err, req, res, next) {
+  console.log(err);
   let error = { ...err };
   if (error.name === "CastError") {
     error = new ErrorResponse(`Incorrectly formatted Id`, 400);

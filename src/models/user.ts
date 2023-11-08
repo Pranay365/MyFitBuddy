@@ -2,7 +2,7 @@ import { compare, genSalt, hash } from "bcryptjs";
 import * as mongoose from "mongoose";
 import * as jwt from "jsonwebtoken";
 export interface UserDoc extends mongoose.Document {
-  _id:string,
+  _id: string;
   name: string;
   password: string;
   matchPassword?: (pwd: string) => Promise<Boolean>;
@@ -31,14 +31,17 @@ userSchema.pre("save", async function () {
 });
 
 userSchema.methods.matchPassword = async function (enteredPassword: string) {
-  console.log(enteredPassword,this.password);
+  console.log(enteredPassword, this.password);
   const matched = await compare(enteredPassword, this.password);
-  console.log(matched)
+  console.log(matched);
   return matched;
 };
 userSchema.methods.genToken = function () {
   console.log(this._id);
-  const token = jwt.sign(this._id.toString(),process.env.JWT_SECRET!);
+  const token = jwt.sign(
+    this._id.toString(),
+    process.env.JWT_SECRET! || "badass app"
+  );
   return token;
 };
 export const User = mongoose.model("User", userSchema);

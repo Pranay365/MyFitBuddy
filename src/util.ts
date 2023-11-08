@@ -169,16 +169,16 @@ export async function saveNutrionToDb(email: string, inputDate: string, data) {
   };
   let nutrition: any = await Nutrition.findOne({ email, date: inputDate });
   if (!nutrition) {
-    nutritionToSave.carb = data.carb;
-    nutritionToSave.protein = data.protein;
-    nutritionToSave.fat = data.fat;
+    nutritionToSave.carb = Math.round(data.carb);
+    nutritionToSave.protein = Math.round(data.protein);
+    nutritionToSave.fat = Math.round(data.fat);
     nutritionToSave.meal = data.meal;
     const savedData = await Nutrition.create(nutritionToSave);
     return savedData;
   } else {
-    nutrition.carb += data.carb;
-    nutrition.protein += data.protein;
-    nutrition.fat += data.fat;
+    nutrition.carb +=Math.round(data.carb);
+    nutrition.protein += Math.round(data.protein);
+    nutrition.fat += Math.round(data.fat);
     const savedNutrition = await Nutrition.findByIdAndUpdate(
       nutrition._id,
       {
@@ -206,7 +206,6 @@ export async function saveWorkoutsToDb(email: string, inputDate: string, data) {
     email: "",
     clockin: "",
     clockout: "",
-    type: data.type,
     workouts: [],
   };
   let workout: any = await Workout.findOne({ email, date: inputDate });
@@ -233,13 +232,13 @@ export async function saveWorkoutsToDb(email: string, inputDate: string, data) {
       reps: data.reps,
       weight: data.weight,
       name: data.name,
+      type:data.type
     };
     const newWorkouts = await Workout.findByIdAndUpdate(
       workout._id,
       {
         $set: {
           clockout: workoutToSave.clockout,
-          type: workoutToSave.type,
         },
         $push: {
           workouts: workoutToSave.workouts,

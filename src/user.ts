@@ -21,6 +21,7 @@ export async function getUser(req, res) {
 }
 
 export async function saveUserSettings(req, res) {
+  console.log(req.body);
   const { heartbeat, maintain_cal, sleep } = req.body;
     const settings = await saveSettings(
       req.user.email,

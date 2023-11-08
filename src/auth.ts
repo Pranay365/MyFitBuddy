@@ -1,4 +1,4 @@
-import { User, UserDoc } from "./models/user";
+import { User } from "./models/user";
 import * as jwt from "jsonwebtoken";
 
 export async function login(req, res) {
@@ -44,10 +44,11 @@ function sendTokenResponse(res, user) {
   res
     .status(200)
     .cookie("access-token", token, options)
-    .json({ success: true, data: user });
+    .json({ success: true, data: user,token:token });
 }
 
 export async function authorized(req, res, next) {
+  console.log(req.headers);
   if (
     req.headers.authorization &&
     req.headers.authorization.startsWith("bearer")
