@@ -23,9 +23,10 @@ export async function login(req, res) {
 }
 
 export async function signup(req, res) {
+  console.log(req.body);
   const { name, email, password, confirmPassword } = req.body;
   console.log(req.body);
-  if (!email || !password || password !== confirmPassword) {
+  if (!email || !password || (password !== confirmPassword)) {
     return res.status(400).json({ success: false, error: "Invalid entry" });
   }
   const user = await User.create({ name, email, password });

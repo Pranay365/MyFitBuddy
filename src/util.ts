@@ -176,7 +176,7 @@ export async function saveNutrionToDb(email: string, inputDate: string, data) {
     const savedData = await Nutrition.create(nutritionToSave);
     return savedData;
   } else {
-    nutrition.carb +=Math.round(data.carb);
+    nutrition.carb += Math.round(data.carb);
     nutrition.protein += Math.round(data.protein);
     nutrition.fat += Math.round(data.fat);
     const savedNutrition = await Nutrition.findByIdAndUpdate(
@@ -232,7 +232,7 @@ export async function saveWorkoutsToDb(email: string, inputDate: string, data) {
       reps: data.reps,
       weight: data.weight,
       name: data.name,
-      type:data.type
+      type: data.type,
     };
     const newWorkouts = await Workout.findByIdAndUpdate(
       workout._id,
@@ -262,51 +262,21 @@ export async function saveSettings(
   maintain_cal: number,
   sleep: number
 ) {
-  const savedSettings = await Stats.create({
-    email,
-    heartbeat,
-    maintain_cal,
-    sleep,
-  });
-  return savedSettings;
-}
-export async function writeRecordsToDb(id: string, newWorkouts: string) {
-  const filePath = `${join(srcDir, "workouts", id)}.json`;
-  try {
-    return await writeFilePromise(filePath, newWorkouts);
-  } catch (ex) {
-    throw new Error(`Unable to save the workouts`);
+  const existingSettings = await Stats.findOne({ email });
+  if (!existingSettings) {
+    const savedSettings = await Stats.create({
+      email,
+      heartbeat,
+      maintain_cal,
+      sleep,
+    });
+    return savedSettings;
+  } else {
+    const newSettings = { email, heartbeat, maintain_cal, sleep };
+    const savedSettings = await Stats.findByIdAndUpdate(
+      existingSettings._id,
+      newSettings
+    );
+    return savedSettings;
   }
 }
-// export async function readStatsForWorkout(
-//   id: string,
-//   workoutname: string,
-//   startDate: string,
-//   endDate: string
-// ) {
-//   // call filesystem to get the stats for a workout
-//   try {
-//     let filepath = `${join(srcDir, "workouts", id)}.json`;
-//     const workoutRecordInJson = await readFilePromise(filepath, "utf-8");
-//     const workoutRecordObj = JSON.parse(workoutRecordInJson);
-//     // parse workoutsrecord and find the given workoutname stats
-//     let dates = [];
-//     const startTime = new Date(startDate).getTime();
-//     const endTime = new Date(endDate).getTime();
-//     let currentTime = startTime;
-//     while (currentTime <= endTime) {
-//       dates.push(new Date(currentTime).toISOString().split("T")[0]);
-//       currentTime += 24 * 60 * 60 * 1000;
-//     }
-//     const allWorkoutStats = dates.reduce((acc: any, el) => {
-//       if (workoutRecordObj[el]?.workouts[workoutname]) {
-//         acc.push({ [el]: workoutRecordObj[el].workouts[workoutname] });
-//       }
-//       return acc;
-//     }, []);
-//     return allWorkoutStats;
-//   } catch (ex) {
-//     console.log("No Workout Found for this user");
-//     return;
-//   }
-// }

@@ -38,7 +38,7 @@ router.get("/", (req, res) => {
 router.get("/hello", connectDb, authorized, function (req: any, res, next) {
   res.status(200).json({ success: true, data: req.user });
 });
-router.post("/signup", connectDb,asyncHandler(photoHandler), asyncHandler(signup));
+router.post("/signup", connectDb, asyncHandler(signup));
 
 
 // router.get("/logout", isAuthenticated, logout);
