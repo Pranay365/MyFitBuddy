@@ -7,7 +7,7 @@ import cors from "cors";
 import cookieParser from "cookie-parser";
 // import { getUserProfilePic, user, userSettings } from "./user";
 import { authorized, login, signup } from "../src/auth";
-import { createWorkout, getWorkouts } from "../src/workouts";
+import { createWorkout, getWorkoutById, getWorkouts } from "../src/workouts";
 import {
   getAllAvailableFoods,
   getUsersNutrition,
@@ -17,14 +17,14 @@ import { getUser, saveUserSettings } from "../src/user";
 import asyncHandler from "../src/middleware/asyncHandler";
 import errorHandler from "../src/middleware/ErrorHandler";
 import { connectDb } from "../src/middleware/connectDb";
-import {photoHandler} from "../src/middleware/photoHandler";
+
 const app = express();
 const router = express.Router();
 
-app.use((req,res,next)=>{
-  res.setHeader("Access-Control-Allow-Origin","*");
-  res.setHeader("Access-Control-Allow-Methods","GET,POST,PUT,PATCH,DELETE");
-  res.setHeader("Access-Control-Allow-Headers","Content-Type,Authorization");
+app.use((req, res, next) => {
+  res.setHeader("Access-Control-Allow-Origin", "*");
+  res.setHeader("Access-Control-Allow-Methods", "GET,POST,PUT,PATCH,DELETE");
+  res.setHeader("Access-Control-Allow-Headers", "Content-Type,Authorization");
   next();
 });
 
@@ -39,7 +39,6 @@ router.get("/hello", connectDb, authorized, function (req: any, res, next) {
   res.status(200).json({ success: true, data: req.user });
 });
 router.post("/signup", connectDb, asyncHandler(signup));
-
 
 // router.get("/logout", isAuthenticated, logout);
 
@@ -59,6 +58,7 @@ router.post(
 // // workouts
 
 router.get("/workouts", connectDb, authorized, asyncHandler(getWorkouts));
+router.get("/workouts/:id", connectDb,authorized, asyncHandler(getWorkoutById));
 
 router.post("/workouts", connectDb, authorized, asyncHandler(createWorkout));
 

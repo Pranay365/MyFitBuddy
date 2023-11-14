@@ -1,4 +1,4 @@
-import { saveWorkoutsToDb, readWorkoutsFromDB } from "./util";
+import { saveWorkoutsToDb, readWorkoutsFromDB, readWorkoutDetailsFromDB } from "./util";
 import { Workout } from "./workout.types";
 import ErrorResponse from "./ErrorResponse";
 
@@ -31,4 +31,11 @@ export async function getWorkouts(req, res, next) {
   const allWorkouts = await readWorkoutsFromDB(req.user.email);
   if (!allWorkouts) throw new ErrorResponse(`Workouts not found in DB`, 404);
   return res.status(200).json({ success: true, data: allWorkouts });
+}
+
+export async function getWorkoutById(req,res){
+  const workoutDetails=await readWorkoutDetailsFromDB(req.params.id);
+  console.log(workoutDetails);
+  if(!workoutDetails) throw new ErrorResponse(`Workout not found`,404);
+  return res.status(200).json({success:true,data:workoutDetails});
 }

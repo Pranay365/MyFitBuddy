@@ -157,6 +157,11 @@ export async function readWorkoutsFromDB(email: string) {
   const workouts = await Workout.find({ email });
   return workouts;
 }
+
+export async function readWorkoutDetailsFromDB(id:string) {
+  const workout=await Workout.findById(id);
+  return workout;
+}
 export async function readNutritionFromDB(email: string) {
   const nutrition = await Nutrition.find({ email });
   return nutrition;
