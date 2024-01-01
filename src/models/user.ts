@@ -1,6 +1,7 @@
 import { compare, genSalt, hash } from "bcryptjs";
 import * as mongoose from "mongoose";
 import * as jwt from "jsonwebtoken";
+import { number } from "yargs";
 export interface UserDoc extends mongoose.Document {
   _id: string;
   name: string;
@@ -23,6 +24,9 @@ const userSchema = new mongoose.Schema({
     select: false,
   },
   createdAt: { type: String, default: new Date(Date.now()) },
+  sleep: { type: Number, default: 0 },
+  heartbeat: { type: Number, default: 0 },
+  maintain_cal: { type: Number, default: 0 },
 });
 
 userSchema.pre("save", async function () {
