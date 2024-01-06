@@ -15,8 +15,8 @@ export async function authorized(req, res, next) {
       console.log(user);
       req.user = user;
       next();
-    } catch (err) {
-      console.log(err);
+    } catch (err: any) {
+      console.log("error is " + err.message);
       return res.status(401).json({ success: false, error: `Unauthorized` });
     }
   } else {

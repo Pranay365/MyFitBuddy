@@ -2,12 +2,12 @@ import WorkoutService from "./workoutService";
 const workoutService = new WorkoutService();
 
 export async function createWorkout(req: any, res) {
-  const newWorkouts = workoutService.createWorkout(
+  const newWorkouts = await workoutService.createWorkout(
     req.body.workouts,
     req.user.email,
     req.body.date
   );
-  return res.status(200).send(newWorkouts);
+  return res.status(200).json({success:true,data:newWorkouts});
 }
 
 export async function getWorkouts(req, res, next) {

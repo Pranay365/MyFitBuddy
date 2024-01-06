@@ -3,12 +3,12 @@ import { AuthService } from "./authService";
 const authService = new AuthService();
 
 export async function login(req, res) {
-  const user = authService.login(req.body);
+  const user = await authService.login(req.body);
   return sendTokenResponse(res, user);
 }
 
 export async function signup(req, res) {
-  const user = authService.signup(req.body);
+  const user = await authService.signup(req.body);
   return sendTokenResponse(res, user);
 }
 

@@ -1,3 +1,4 @@
+import mongoose from "mongoose";
 import { serviceLocator } from "./serviceLocator";
 
 // export async function findOne(schema, args, options?) {
@@ -26,9 +27,9 @@ import { serviceLocator } from "./serviceLocator";
 
 // export async function find(schema,)
 
-export async function execute(schema,method,params,options?){
-    const model=serviceLocator.get(schema);
-    let result=model[method](...params);
-    if(options?.select) result=result.select(`+${options.select}`);
-    return result;
+export async function execute(schema, method, params, options?) {
+  const model = serviceLocator.get(schema);
+  let result = model[method](...params);
+  if (options?.select) result = result.select(`+${options.select}`);
+  return await result;
 }

@@ -2,12 +2,11 @@ import { serviceLocator } from "../src/serviceLocator";
 import WorkoutStartegy from "../src/workouts/workoutService";
 describe("test for workouts list", () => {
   it("should create a new workout when no workout exists", async () => {
-    let savedWorkouts;
+    let savedWorkouts,queryReceived,workoutsReceived;
     serviceLocator.register("Workout", {
-      async findOne() {
-        return;
-      },
-      async create(savedWorkoutsInDb) {
+      async updateOne(query,workouts,savedWorkoutsInDb) {
+        queryReceived=query;
+        workoutsReceived=workouts;
         savedWorkouts = savedWorkoutsInDb;
       },
     });
@@ -23,38 +22,9 @@ describe("test for workouts list", () => {
       "test@test.com",
       "2023-12-28"
     );
-    expect(savedWorkouts.date).toBe("2023-12-28");
-    expect(savedWorkouts.email).toBe("test@test.com");
-    expect(savedWorkouts.clockin).toBe("2023-12-28T00:00:00.000Z");
-    expect(savedWorkouts.workouts).toEqual(workouts);
-  });
-  it("should append to the existing workouts when the workout for the given date exists", async () => {
-    const workouts = [
-      { name: "bench", reps: 10, weight: 20, rest: 10, type: "weight" },
-      { name: "bench", reps: 10, weight: 30, rest: 10, type: "weight" },
-      { name: "running", time: 10, distance: 10, type: "cardio" },
-      { name: "pushups", reps: 30, rest: 5, type: "bw" },
-    ];
-    let workoutOpnObj, workoutId;
-    serviceLocator.register("Workout", {
-      async findOne() {
-        return { _id: 1, workouts };
-      },
-      async findByIdAndUpdate(id, workoutOpnObject) {
-        workoutId = id;
-        workoutOpnObj = workoutOpnObject;
-      },
-    });
-
-    const workoutStartegy = new WorkoutStartegy();
-    await workoutStartegy.createWorkout(
-      workouts,
-      "test@test.com",
-      "2023-12-28"
-    );
-    expect(workoutOpnObj["$set"].clockout).toBeDefined();
-    expect(workoutOpnObj["$push"].workouts).toEqual(workouts);
-    expect(workoutId).toBe(1);
+    expect(queryReceived.date).toBe("2023-12-28");
+    expect(queryReceived.email).toBe("test@test.com");
+    expect(workoutsReceived["$push"].workouts["$each"]).toEqual(workouts);
   });
   it("should fetch workouts of the user by email", async () => {
     const workouts = [

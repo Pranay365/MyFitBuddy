@@ -12,6 +12,7 @@ export default class NutritionStrategy {
         "No nutrition details available for the user",
         400
       );
+    return result;
   }
   addCaloriesToNutritionData(nutrition: any = []) {
     if (!nutrition.length) return [];
@@ -53,49 +54,55 @@ export default class NutritionStrategy {
     return nutrition;
   }
   async saveNutrionToDb(email: string, inputDate: string, data) {
-    let nutritionToSave: any = {
-      date: inputDate,
-      email,
-      meal: [],
-    };
-    let nutrition: any = await db.execute("Nutrition", "findOne", [
+    let nutritionInfo = await db.execute("Nutrition", "updateOne", [
       { email, date: inputDate },
+      {
+        $inc: { carb: data.carb, fat: data.fat, protein: data.protein },
+        $set: { email, date: inputDate },
+        $push: { meal: data.meal },
+      },
+      { upsert: true, new: true },
     ]);
-    if (!nutrition) {
-      nutritionToSave.carb = Math.round(data.carb);
-      nutritionToSave.protein = Math.round(data.protein);
-      nutritionToSave.fat = Math.round(data.fat);
-      nutritionToSave.meal = data.meal;
-      const savedData = await db.execute("Nutrition", "create", [
-        nutritionToSave,
-      ]);
-      return savedData;
-    } else {
-      nutrition.carb += Math.round(data.carb);
-      nutrition.protein += Math.round(data.protein);
-      nutrition.fat += Math.round(data.fat);
-      const savedNutrition = await db.execute(
-        "Nutrition",
-        "findByIdAndUpdate",
-        [
-          nutrition._id,
-          {
-            $push: {
-              meal: data.meal,
-            },
-            $set: {
-              carb: nutrition.carb,
-              protein: nutrition.protein,
-              fat: nutrition.fat,
-            },
-          },
-          {
-            new: true,
-          },
-        ]
-      );
-      return savedNutrition;
-    }
+    // let nutrition: any = await db.execute("Nutrition", "findOne", [
+    //   { email, date: inputDate },
+    // ]);
+
+    // if (!nutrition) {
+    //   nutritionToSave.carb = Math.round(data.carb);
+    //   nutritionToSave.protein = Math.round(data.protein);
+    //   nutritionToSave.fat = Math.round(data.fat);
+    //   nutritionToSave.meal = data.meal;
+    //   const savedData = await db.execute("Nutrition", "create", [
+    //     nutritionToSave,
+    //   ]);
+    //   return savedData;
+    // } else {
+    //   nutrition.carb += Math.round(data.carb);
+    //   nutrition.protein += Math.round(data.protein);
+    //   nutrition.fat += Math.round(data.fat);
+    //   const savedNutrition = await db.execute(
+    //     "Nutrition",
+    //     "findByIdAndUpdate",
+    //     [
+    //       nutrition._id,
+    //       {
+    //         $push: {
+    //           meal: data.meal,
+    //         },
+    //         $set: {
+    //           carb: nutrition.carb,
+    //           protein: nutrition.protein,
+    //           fat: nutrition.fat,
+    //         },
+    //       },
+    //       {
+    //         new: true,
+    //       },
+    //     ]
+    //   );
+    //   return savedNutrition;
+    // }
+    return nutritionInfo;
   }
   async getAllFoodOptions() {
     const allFoods = await db.execute("Foods", "find", [{}]);

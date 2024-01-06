@@ -38,46 +38,49 @@ export default class WorkoutStartegy {
     return workoutDetails;
   }
   async saveWorkoutsToDb(email: string, inputDate: string, data) {
-    // 1 read the date of the workout
-    let workoutToSave: any = {
-      date: inputDate,
-      email: "",
-      clockin: "",
-      clockout: "",
-      workouts: [],
-    };
-    let workout: any = await db.execute("Workout", "findOne", [
+    const saved_workout = await db.execute("Workout", "updateOne", [
       { email, date: inputDate },
+      {
+        $set: { email, date: inputDate, clockout: new Date().toISOString() },
+        $push: { workouts: { $each: data } },
+        $setOnInsert: { clockin: new Date().toISOString() } ,
+      },
+      { upsert: true, new: true },
     ]);
-    if (!workout) {
-      // no existing workout in db
-      workoutToSave.date = inputDate;
-      workoutToSave.email = email;
-      workoutToSave.clockin = new Date(inputDate).toISOString();
-      workoutToSave.clockout = new Date(inputDate).toISOString();
-      workoutToSave.workouts = data;
-      console.log(workoutToSave);
-      const newWorkouts = await db.execute("Workout", "create", [workoutToSave]);
-      return newWorkouts;
-    } else {
-      // existing workout in db
-      workoutToSave.clockout = new Date().toISOString();
-      const newWorkouts = await db.execute("Workout", "findByIdAndUpdate", [
-        workout._id,
-        {
-          $set: {
-            clockout: workoutToSave.clockout,
-          },
-          $push: {
-            workouts: data,
-          },
-        },
-        {
-          new: true,
-        },
-      ]);
-      return newWorkouts;
-    }
+    console.log(saved_workout);
+    return saved_workout;
+    // let workout: any = await db.execute("Workout", "findOne", [
+    //   { email, date: inputDate },
+    // ]);
+    // if (!workout) {
+    //   // no existing workout in db
+    //   workoutToSave.date = inputDate;
+    //   workoutToSave.email = email;
+    //   workoutToSave.clockin = new Date(inputDate).toISOString();
+    //   workoutToSave.clockout = new Date(inputDate).toISOString();
+    //   workoutToSave.workouts = data;
+    //   console.log(workoutToSave);
+    //   const newWorkouts = await db.execute("Workout", "create", [workoutToSave]);
+    //   return newWorkouts;
+    // } else {
+    //   // existing workout in db
+    //   workoutToSave.clockout = new Date().toISOString();
+    //   const newWorkouts = await db.execute("Workout", "findByIdAndUpdate", [
+    //     workout._id,
+    //     {
+    //       $set: {
+    //         clockout: workoutToSave.clockout,
+    //       },
+    //       $push: {
+    //         workouts: data,
+    //       },
+    //     },
+    //     {
+    //       new: true,
+    //     },
+    //   ]);
+    //   return newWorkouts;
+    // }
   }
   async readWorkoutDetailsFromDB(id: string) {
     const workout = await db.execute("Workout", "findById", [id]);

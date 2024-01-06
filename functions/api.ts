@@ -31,7 +31,6 @@ import { User } from "../src/models/user";
 import { Workout } from "../src/models/workout";
 import { Foods } from "../src/models/foods";
 import { Nutrition } from "../src/models/nutrition";
-import { Stats } from "../src/models/stats";
 
 const app = express();
 const router = express.Router();
