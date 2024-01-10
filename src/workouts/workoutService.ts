@@ -14,7 +14,7 @@ export default class WorkoutStartegy {
       const fields = this.fields[workout.type];
       let temp = {};
       fields.forEach((field) => {
-        if (!workout[field])
+        if (workout[field] == null || workout[field] == undefined)
           throw new ErrorResponse(
             `Expected ${field} but not provided in the input`,
             400
@@ -43,7 +43,7 @@ export default class WorkoutStartegy {
       {
         $set: { email, date: inputDate, clockout: new Date().toISOString() },
         $push: { workouts: { $each: data } },
-        $setOnInsert: { clockin: new Date().toISOString() } ,
+        $setOnInsert: { clockin: new Date().toISOString() },
       },
       { upsert: true, new: true },
     ]);

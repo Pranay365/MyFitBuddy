@@ -1,7 +1,7 @@
 import { compare, genSalt, hash } from "bcryptjs";
 import * as mongoose from "mongoose";
 import * as jwt from "jsonwebtoken";
-import { number } from "yargs";
+
 export interface UserDoc extends mongoose.Document {
   _id: string;
   name: string;
@@ -42,10 +42,7 @@ userSchema.methods.matchPassword = async function (enteredPassword: string) {
 };
 userSchema.methods.genToken = function () {
   console.log(this._id);
-  const token = jwt.sign(
-    this._id.toString(),
-    process.env.JWT_SECRET! || "badass app"
-  );
+  const token = jwt.sign(this._id.toString(), process.env.JWT_SECRET!);
   return token;
 };
 export const User = mongoose.model("User", userSchema);

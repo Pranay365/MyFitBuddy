@@ -1,10 +1,9 @@
 import express from "express";
 
-//import multer from "multer";
 import serverless from "serverless-http";
 import bodyParser from "body-parser";
 import cookieParser from "cookie-parser";
-// import { getUserProfilePic, user, userSettings } from "./user";
+
 import {
   login,
   signup,
@@ -31,7 +30,9 @@ import { User } from "../src/models/user";
 import { Workout } from "../src/models/workout";
 import { Foods } from "../src/models/foods";
 import { Nutrition } from "../src/models/nutrition";
-
+if (process.env.NODE_ENV !== "production") {
+  require("dotenv").config();
+}
 const app = express();
 const router = express.Router();
 

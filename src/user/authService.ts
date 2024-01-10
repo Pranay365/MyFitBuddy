@@ -39,14 +39,13 @@ export class AuthService {
   async saveUserHealthStats(email, healthStats) {
     let savedHealthStats;
     const { heartbeat, maintain_cal, sleep } = healthStats;
-    savedHealthStats = await db.execute("User", "findOneAndUpdate", [
+    savedHealthStats = await db.execute("User", "updateOne", [
       { email },
       {
         $set: {
-          "data.email": email,
-          "data.heartbeat": heartbeat,
-          "data.maintain_cal": maintain_cal,
-          "data.sleep": sleep,
+          heartbeat: heartbeat,
+          maintain_cal: maintain_cal,
+          sleep: sleep,
         },
       },
       {
