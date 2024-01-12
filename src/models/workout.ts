@@ -4,6 +4,7 @@ const setSchema = new mongoose.Schema({
   reps: Number,
   weight: Number,
   type:String,
+  rest:Number,
   name: String,
 });
 const WorkoutSchema = new mongoose.Schema({

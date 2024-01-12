@@ -38,6 +38,7 @@ export default class WorkoutStartegy {
     return workoutDetails;
   }
   async saveWorkoutsToDb(email: string, inputDate: string, data) {
+    console.log(data);
     const saved_workout = await db.execute("Workout", "updateOne", [
       { email, date: inputDate },
       {
