@@ -1,7 +1,7 @@
+import axios from "axios";
 import ErrorResponse from "../ErrorResponse";
 import * as db from "../db";
 export default class NutritionStrategy {
-  constructor() {}
   async getUsersNutrition(email) {
     console.log("request received");
     const nutrition = await this.readNutritionFromDB(email);
@@ -16,8 +16,30 @@ export default class NutritionStrategy {
   }
   addCaloriesToNutritionData(nutrition: any = []) {
     if (!nutrition.length) return [];
-    return nutrition.map((n) => {
-      let calories = n.carb * 4 + n.protein * 4 + n.fat * 8;
+    return nutrition.map(async (n) => {
+      // let calories = n.carb * 4 + n.protein * 4 + n.fat * 8;
+      // return {
+      //   carb: n.carb,
+      //   protein: n.protein,
+      //   fat: n.fat,
+      //   meal: n.meal,
+      //   date: n.date,
+      //   calories,
+      // };
+      console.log(JSON.stringify(n.meal, null, 2));
+      let foodDetailsPromise = n.meal.map(async (meal) =>
+        axios.get(
+          `${process.env.EDAMAN_URI}?app_id=${process.env.APP_ID}&app_key=${
+            process.env.APP_KEY
+          }&ingr=${encodeURIComponent(meal.quantity + "g " + meal.foodName)}`
+        )
+      );
+      const foodDetails = await Promise.all(foodDetailsPromise);
+      let calories = foodDetails.reduce((cal, food) => {
+        cal += food.data?.totalNutrients.ENERC_KCAL.quantity || 0;
+        return cal;
+      }, 0);
+      // review what needs to be stored and sent
       return {
         carb: n.carb,
         protein: n.protein,
@@ -29,7 +51,7 @@ export default class NutritionStrategy {
     });
   }
   async saveUsersNutrition(email, nutritionInfo) {
-    const { date, fat, protein, carb, meal } = nutritionInfo;
+    const { date, meal } = nutritionInfo;
     if (!Array.isArray(meal))
       throw new ErrorResponse("Not a valid meal. Meal should be an array", 400);
     const currentTimeInIST = new Date()
@@ -37,10 +59,29 @@ export default class NutritionStrategy {
         timeZone: "Asia/Kolkata",
       })
       .split(",")[1];
+    const foodPromise = meal.map((foodItem) =>
+      axios.get(
+        `${process.env.EDAMAN_URI}?app_id=${process.env.APP_ID}&app_key=${
+          process.env.APP_KEY
+        }&ingr=${encodeURIComponent(
+          foodItem.quantity + "g " + foodItem.foodName
+        )}`
+      )
+    );
+    const foodDetails = await Promise.all(foodPromise);
+    const macros = foodDetails.reduce(
+      (macros, macro) => {
+        macros.fat += macro.data.totalNutrients.FAT.quantity;
+        macros.protein += macro.data.totalNutrients.PROCNT.quantity;
+        macros.carb += macro.data.totalNutrients.CHOCDF.net.quantity;
+        return macros;
+      },
+      { fat: 0, carb: 0, protein: 0 }
+    );
     const data = {
-      fat,
-      protein,
-      carb,
+      fat: macros.fat,
+      protein: macros.protein,
+      carb: macros.carb,
       meal: meal.map((food) => ({
         ...food,
         quantity: Number(food.quantity),
@@ -63,49 +104,25 @@ export default class NutritionStrategy {
       },
       { upsert: true, new: true },
     ]);
-    // let nutrition: any = await db.execute("Nutrition", "findOne", [
-    //   { email, date: inputDate },
-    // ]);
-
-    // if (!nutrition) {
-    //   nutritionToSave.carb = Math.round(data.carb);
-    //   nutritionToSave.protein = Math.round(data.protein);
-    //   nutritionToSave.fat = Math.round(data.fat);
-    //   nutritionToSave.meal = data.meal;
-    //   const savedData = await db.execute("Nutrition", "create", [
-    //     nutritionToSave,
-    //   ]);
-    //   return savedData;
-    // } else {
-    //   nutrition.carb += Math.round(data.carb);
-    //   nutrition.protein += Math.round(data.protein);
-    //   nutrition.fat += Math.round(data.fat);
-    //   const savedNutrition = await db.execute(
-    //     "Nutrition",
-    //     "findByIdAndUpdate",
-    //     [
-    //       nutrition._id,
-    //       {
-    //         $push: {
-    //           meal: data.meal,
-    //         },
-    //         $set: {
-    //           carb: nutrition.carb,
-    //           protein: nutrition.protein,
-    //           fat: nutrition.fat,
-    //         },
-    //       },
-    //       {
-    //         new: true,
-    //       },
-    //     ]
-    //   );
-    //   return savedNutrition;
-    // }
     return nutritionInfo;
   }
   async getAllFoodOptions() {
     const allFoods = await db.execute("Foods", "find", [{}]);
-    return allFoods;
+    const allFoodsPromise=allFoods.map(async function (foodItem) {
+      const foodDetails = await axios.get(
+        `${process.env.EDAMAN_URI}?app_id=${process.env.APP_ID}&app_key=${
+          process.env.APP_KEY
+        }&ingr=${encodeURIComponent(1 + "g " + foodItem.name)}`
+      );
+      return {
+        _id: foodItem._id,
+        name: foodItem.name,
+        carb: foodDetails.data.totalNutrients.CHOCDF.net.quantity,
+        fat: foodDetails.data.totalNutrients.FAT.quantity,
+        protein: foodDetails.data.totalNutrients.PROCNT.quantity,
+      };
+    });
+    let allFoodsWDetails=Promise.all(allFoodsPromise);
+    return allFoodsWDetails;
   }
 }
