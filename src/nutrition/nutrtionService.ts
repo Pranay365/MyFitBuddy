@@ -52,19 +52,20 @@ export default class NutritionStrategy {
         macros.fat += macro.data.totalNutrients.FAT.quantity;
         macros.protein += macro.data.totalNutrients.PROCNT.quantity;
         macros.carb += macro.data.totalNutrients["CHOCDF.net"].quantity;
+        macros.calories+=macro.data.totalNutrients.ENERC_KCAL.quantity;
         return macros;
       },
-      { fat: 0, carb: 0, protein: 0 }
+      { fat: 0, carb: 0, protein: 0,calories:0 }
     );
-    const calories = Math.round(
-      macros.fat * 8 + macros.protein * 4 + macros.carb * 4
-    );
-    console.log(calories);
+    // const calories = Math.round(
+    //   macros.fat * 8 + macros.protein * 4 + macros.carb * 4
+    // );
+    // console.log(calories);
     const data = {
       fat: macros.fat,
       protein: macros.protein,
       carb: macros.carb,
-      calories,
+      calories:macros.calories,
       meal: meal.map((food) => ({
         ...food,
         quantity: Number(food.quantity),
