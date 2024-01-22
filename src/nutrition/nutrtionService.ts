@@ -106,6 +106,7 @@ export default class NutritionStrategy {
       return {
         _id: foodItem._id,
         name: foodItem.name,
+        calories: foodDetails.data.totalNutrients.ENERC_KCAL.quantity,
         carb: foodDetails.data.totalNutrients["CHOCDF.net"].quantity,
         fat: foodDetails.data.totalNutrients.FAT.quantity,
         protein: foodDetails.data.totalNutrients.PROCNT.quantity,
