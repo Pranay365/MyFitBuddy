@@ -5,7 +5,8 @@
   "main": "dist/index.js",
   "scripts": {
     "start": "netlify dev",
-    "test": "jest"
+    "test": "jest",
+    "uploadNutrition": "nodemon src/nutrition/uploader.ts"
   },
   "keywords": [
     "fitness",

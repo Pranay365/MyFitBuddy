@@ -52,10 +52,10 @@ export default class NutritionStrategy {
         macros.fat += macro.data.totalNutrients.FAT.quantity;
         macros.protein += macro.data.totalNutrients.PROCNT.quantity;
         macros.carb += macro.data.totalNutrients["CHOCDF.net"].quantity;
-        macros.calories+=macro.data.totalNutrients.ENERC_KCAL.quantity;
+        macros.calories += macro.data.totalNutrients.ENERC_KCAL.quantity;
         return macros;
       },
-      { fat: 0, carb: 0, protein: 0,calories:0 }
+      { fat: 0, carb: 0, protein: 0, calories: 0 }
     );
     // const calories = Math.round(
     //   macros.fat * 8 + macros.protein * 4 + macros.carb * 4
@@ -65,7 +65,7 @@ export default class NutritionStrategy {
       fat: macros.fat,
       protein: macros.protein,
       carb: macros.carb,
-      calories:macros.calories,
+      calories: macros.calories,
       meal: meal.map((food) => ({
         ...food,
         quantity: Number(food.quantity),
@@ -98,20 +98,25 @@ export default class NutritionStrategy {
   async getAllFoodOptions() {
     const allFoods = await db.execute("Foods", "find", [{}]);
     const allFoodsPromise = allFoods.map(async function (foodItem) {
-      const url = `${process.env.EDAMAN_URI}?app_id=${
-        process.env.APP_ID
-      }&app_key=${process.env.APP_KEY}&ingr=1${encodeURIComponent(
-        (!foodItem.name.includes("egg") ? "g " : "large ") + foodItem.name
-      )}`;
-      const foodDetails = await axios.get(url);
-      return {
-        _id: foodItem._id,
-        name: foodItem.name,
-        calories: foodDetails.data.totalNutrients.ENERC_KCAL.quantity,
-        carb: foodDetails.data.totalNutrients["CHOCDF.net"].quantity,
-        fat: foodDetails.data.totalNutrients.FAT.quantity,
-        protein: foodDetails.data.totalNutrients.PROCNT.quantity,
-      };
+      try {
+        const url = `${process.env.EDAMAN_URI}?app_id=${
+          process.env.APP_ID
+        }&app_key=${process.env.APP_KEY}&ingr=1${encodeURIComponent(
+          (!foodItem.name.includes("egg") ? "g " : "large ") + foodItem.name
+        )}`;
+        const foodDetails = await axios.get(url);
+        console.log("foodDetails>>>", foodDetails.data);
+        return {
+          _id: foodItem._id,
+          name: foodItem.name,
+          calories: foodDetails.data.totalNutrients.ENERC_KCAL?.quantity || 0,
+          carb: foodDetails.data.totalNutrients["CHOCDF.net"]?.quantity || 0,
+          fat: foodDetails.data.totalNutrients.FAT?.quantity || 0,
+          protein: foodDetails.data.totalNutrients.PROCNT?.quantity || 0,
+        };
+      } catch (ex) {
+        console.log(foodItem);
+      }
     });
     let allFoodsWDetails = await Promise.all(allFoodsPromise);
     return allFoodsWDetails;
